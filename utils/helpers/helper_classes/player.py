@@ -5,6 +5,7 @@ class Player(House):
         self.balance = balance
         self.deck_object = deck
         self.score = 0
+        self.previous_cards = []
 
     def select_bet(self):
         while True:

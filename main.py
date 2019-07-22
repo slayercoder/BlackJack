@@ -27,7 +27,10 @@ house = house.House(deck)
 
 #show the house cards one will be shown other will be hidden and adjust the available cards after this step
 house.show_card()
-
+print(deck.cards)
 # player will show two cards at ones
 player.show_card()
+print(deck.cards)
 player.show_card()
+
+print(deck.cards)
