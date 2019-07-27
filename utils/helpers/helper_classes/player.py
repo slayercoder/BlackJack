@@ -17,21 +17,15 @@ class Player(House):
                 break
         return bet_amount
     
-    def player_deal(self):
-        deal_input = str(input('Do you want to deal ?. Press "y" or "n"'))
+    # def player_deal(self):
+    #     deal_input = str(input('Do you want to deal ?. Press "y" or "n"'))
 
-        while len(deal_input) != 1:
-            deal_input = input('Please enter valid input! "y / Y" or "n / N"')
-        else:
-            is_deal = True if deal_input.lower().startswith('y') == 'y' else False
+    #     while len(deal_input) != 1:
+    #         deal_input = input('Please enter valid input! "y / Y" or "n / N"')
+    #     else:
+    #         is_deal = deal_input.lower().startswith('y') == 'y'
 
-        return is_deal
+    #     return is_deal
 
-            
-
-        
-
-            
-
-
-    
+    def is_blackjack(self):
+        return self.get_score() == 21

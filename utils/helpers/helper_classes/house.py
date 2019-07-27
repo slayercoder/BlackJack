@@ -19,18 +19,38 @@ class House:
             del self.deck_object.cards[random_suit]
 
         # self.deck_object.update_deck(card_suits[suit_index], card_face[face_index])
-        self.set_score(card_values[random_face])
+        # self.set_score(card_values[random_face])
+        self.decide_ace(card_shown['face'])
         self.previous_cards.append(card_shown)
         print('{0} : {2} of {1}, current score is {3}'.format(self.__class__.__name__, card_shown['suit'].capitalize(), card_shown['face'].capitalize(), self.get_score()))
         return card_shown
 
     def set_score(self, card_value):
         print(card_value)
+        if card_value == 0:
+            self.score = 0
         self.score += card_value
         return self.score
 
     def get_score(self):
         return self.score
+
+    def decide_ace(self, card_face):
+        if self.__class__.__name__ == 'Player' :
+            if card_face == 'ace':
+                upgrade_ace = True if input('Do you want to higher ace ? y / Y').lower()[0].startswith('y') else False
+                self.set_score(card_values['ace']['higher'] if upgrade_ace else card_values['ace']['lower'])
+            else:
+                self.set_score(card_values[card_face])
+        
+        else:
+            if card_face == 'ace':
+                self.set_score(card_values['ace']['higher'])
+            else:
+                self.set_score(card_values[card_face])
+
+                
+ 
 
         # check if the suit for that index has any cards left, 
         # after this randomly select from the remaining card of that suit 
