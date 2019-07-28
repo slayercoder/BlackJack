@@ -1,97 +1,75 @@
-from utils.helpers.helper_functions.welcome_screen import welcome_screen
+from utils.helpers import helper_functions
 from utils.helpers.helper_classes import player, house, deck
-from utils.global_data import default_balance
+from utils import global_data
 
-welcome_screen()
+helper_functions.welcome_screen()
 continue_play = True
 
-deck = deck.Deck()
 while continue_play:
-#initialize the deck
+
+    #initialize the deck
+    deck_obj = deck.Deck()
+
     # initialize the player
-    player = player.Player(default_balance, deck)
+    player_obj = player.Player(global_data.PLAYER_DEFAULT_BALANCE, deck_obj)
 
     #initialize the house
-    house = house.House(deck)
-# from here start looping
-    while player.balance > 0:
-        player.set_score(0)
-        house.set_score(0)
+    house_obj = house.House(deck_obj)
+
+    # loop will continue till the player has sufficient balance
+    while player_obj.get_balance() > 0:
+        player_obj.set_score()
+        house_obj.set_score()
+
         #prompt the player to select a bet from the available balance
-        bet_amount = player.select_bet()
-
-        # player deals here
-        # has_player_deal = player.player_deal()
-
-        # #uncomment below code once the body is in loop 
-        # if not has_player_deal:
-        #     print('Player didn\'t choose to deal, quitting!')
-        #     break
-
-
-
+        bet_amount = player_obj.select_bet()
 
         #show the house cards one will be shown other will be hidden and adjust the available cards after this step
-        house.show_card()
-        print(deck.cards)
-        # player will show two cards at ones
-        player.show_card()
-        # print(deck.cards)
-        player.show_card()
+        house_obj.show_card()
+        print(deck_obj.cards)
 
-        if player.is_blackjack():
-            print('Player won !!, score is {}'.format(player.get_score()))
-            player.balance += 1.5 * bet_amount
-            print('Player balance is {}'.format(player.balance))
+        # player will show two cards at ones
+        for chance in range(global_data.PLAYER_INITIAL_TRY):
+            player_obj.show_card()
+
+        # has player got blackjack
+        if player_obj.is_blackjack():
+            print(global_data.BLACKJACK_MSG)
+            player_obj.set_balance(bet_amount * (1 + global_data.BLACKJACK_FACTOR))
             continue
         
-        print(deck.cards)
+        helper_functions.subsequent_player_chances(player_obj)
         
-        while True:
-            hit_stand = input('Do you want to hit or stand ? ')
-            if hit_stand == 'hit':
-                player.show_card()
-
-                print('player hit')
-
-                if player.get_score() < 21:
-                    continue
-                elif player.get_score() == 21:
-                    print('Player has scored 21, now house will play')
-                    break
-                else:
-                    print('Player has crossed 21 and has lost !!')
-                    break
-            else:
-                print('Player stand, house to play, player score is {}'.format(player.get_score()))
-                break
-
-        while player.get_score() <= 21:
-            if house.get_score() <= 16:
-                print('House is drawing cards...')
-                house_card = house.show_card()
+        # House chances after player has a stand
+        while player_obj.get_score() <= global_data.PLAYER_STAND_CONSTANT:
+            if house_obj.get_score() < global_data.HOUSE_STAND_CONSTANT:
+                print(global_data.HOUSE_DRAWING)
+                house_card = house_obj.show_card()
                 continue
 
-            if house.get_score() > 16 and  house.get_score() <= 21:
-                print('House stopped play and will stand')
-                if house.get_score() > player.get_score():
+            if house_obj.get_score() >= global_data.HOUSE_STAND_CONSTANT and  house_obj.get_score() <= global_data.PLAYER_STAND_CONSTANT:
+                if house_obj.get_score() > player_obj.get_score():
                     print('Player lost !!')
-                    player.balance -= bet_amount
-                    print('player balance is {}'.format(player.balance))
-                    break
-                else:
-                    print('player won !!')
-                    player.balance += bet_amount
-                    print('player balance is {}'.format(player.balance))
+                    player_obj.set_balance(-bet_amount)
+                    print('player balance is {}'.format(player_obj.get_balance()))
                     break
 
-            if house.get_score() > 21:
+                if house_obj.get_score() == player_obj.get_score():
+                    print('Deal tied !! Push !!')
+                    break
+
+                else:
+                    print('player won !!')
+                    player_obj.set_balance(bet_amount) 
+                    print('player balance is {}'.format(player_obj.get_balance()))
+                    break
+
+            if house_obj.get_score() > global_data.PLAYER_STAND_CONSTANT:
                 print('house lost and player is winner')
-                player.balance += bet_amount
-                print('player balance is {}'.format(player.balance))
+                player_obj.set_balance(bet_amount)
+                print('player balance is {}'.format(player_obj.get_balance()))
                 break
         else:
             break
-        # deciding winner
-        # if house.get_score() > 1
-continue_play = input('Do you want to continue play? y/Y or n/N').lower()[0] == 'y'
+
+    continue_play = helper_functions.continue_play()

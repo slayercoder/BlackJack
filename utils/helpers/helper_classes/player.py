@@ -1,31 +1,29 @@
 from utils.helpers.helper_classes.house import House
+from utils import global_data
 
 class Player(House):
     def __init__(self, balance, deck):
-        self.balance = balance
+        self.__balance = balance
         self.deck_object = deck
-        self.score = 0
+        self.__score = 0
         self.previous_cards = []
 
     def select_bet(self):
         while True:
-            bet_amount = int(input('Select the bet amount from the chips '))
-            if bet_amount > self.balance:
-                print('Not sufficient balance for the selected chip, please select bet again!!')
+            bet_amount = int(input(global_data.BET_AMOUNT_MSG))
+            if bet_amount > self.get_balance():
+                print(global_data.BALANCE_WARN_MSG)
                 continue
             else:
                 break
         return bet_amount
-    
-    # def player_deal(self):
-    #     deal_input = str(input('Do you want to deal ?. Press "y" or "n"'))
 
-    #     while len(deal_input) != 1:
-    #         deal_input = input('Please enter valid input! "y / Y" or "n / N"')
-    #     else:
-    #         is_deal = deal_input.lower().startswith('y') == 'y'
+    def get_balance(self):
+        return self.__balance
 
-    #     return is_deal
+    def set_balance(self, amount):
+        self.__balance += amount
+        return self.__balance
 
     def is_blackjack(self):
-        return self.get_score() == 21
+        return self.get_score() == global_data.PLAYER_STAND_CONSTANT

@@ -1,41 +1,45 @@
 from random import choice, randint
 from utils.global_data import card_suits, card_face, card_values
+from utils import global_data
 
 class House:
     def __init__(self, deck):
         self.deck_object = deck
-        self.score = 0
+        self.__score = 0
         self.previous_cards = []
 
     def show_card(self):
         card_shown = {}
         random_suit = choice(list(self.deck_object.cards))
         random_face = choice(list(self.deck_object.cards[random_suit]))
+
         card_shown['face'] = random_face
         card_shown['suit'] = random_suit
         card_shown['value'] = card_values[random_face]
+
         del self.deck_object.cards[random_suit][random_face]
+
         if len(self.deck_object.cards[random_suit]) == 0:
             del self.deck_object.cards[random_suit]
 
-        # self.deck_object.update_deck(card_suits[suit_index], card_face[face_index])
-        # self.set_score(card_values[random_face])
-        self.decide_ace(card_shown['face'])
+        self.__decide_ace(card_shown['face'])
+
         self.previous_cards.append(card_shown)
-        print('{0} : {2} of {1}, current score is {3}'.format(self.__class__.__name__, card_shown['suit'].capitalize(), card_shown['face'].capitalize(), self.get_score()))
+        print('{0} : {2} of {1}'.format(self.__class__.__name__, card_shown['suit'].capitalize(), card_shown['face'].capitalize()))
+        self.game_data()
         return card_shown
 
-    def set_score(self, card_value):
+    def set_score(self, card_value = 0):
         print(card_value)
         if card_value == 0:
-            self.score = 0
-        self.score += card_value
-        return self.score
+            self.__score = 0
+        self.__score += card_value
+        return self.__score
 
     def get_score(self):
-        return self.score
+        return self.__score
 
-    def decide_ace(self, card_face):
+    def __decide_ace(self, card_face):
         if self.__class__.__name__ == 'Player' :
             if card_face == 'ace':
                 upgrade_ace = True if input('Do you want to higher ace ? y / Y').lower()[0].startswith('y') else False
@@ -44,24 +48,12 @@ class House:
                 self.set_score(card_values[card_face])
         
         else:
+        # will be adding probabilistic calculation of ace score 
+        # depending on the remaining cards in the deck
             if card_face == 'ace':
                 self.set_score(card_values['ace']['higher'])
             else:
                 self.set_score(card_values[card_face])
 
-                
- 
-
-        # check if the suit for that index has any cards left, 
-        # after this randomly select from the remaining card of that suit 
-        
-        # face_suit_name = suit_name_object[card_face[randint(0, len(card_face) - 1)]]
-        # suit_name_object[face_suit_name] -= 1
-        # suit_name_object.pop(face_suit_name)
-        # return 'Card with suit {0} face {1}'.format(card_suits[suit_index], face_suit_name)
-
-
-
-# if __name__ == '__main__':
-#     pass
-        
+    def game_data(self):
+        print(global_data.game_data.format(self.__class__.__name__, self.get_score()))

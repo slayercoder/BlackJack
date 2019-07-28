@@ -34,19 +34,3 @@ class Deck:
         self.card_total = total_cards
         return self.card_total
 
-
-if __name__ == '__main__':
-    card_suit_spades = 'spades'
-    card_suit_clubs = 'clubs'
-    card_suit_hearts = 'hearts'
-    card_suit_diamonds = 'diamonds'
-
-    card_suits = (card_suit_spades, card_suit_clubs, card_suit_hearts, card_suit_diamonds)
-    card_face = ('two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'jack', 'queen', 'king', 'ace')
-
-    deck = Deck()
-    # print(init_single_deck())
-    print(deck.cards)
-    print(deck.calculate_total_cards())
-    print(deck.check_suit_availability('spades'))
-
